@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  ENVIRONMENT: {{ .Values.global.environment | quote }}
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  OLLAMA_BASE_URL: "http://ollama:11434"
+  VITE_API_URL: "/api"
+  # Tự động lấy user/pass từ secrets trong values.yaml
+  DATABASE_URL: "postgresql+asyncpg://{{ .Values.secrets.postgresUser }}:{{ .Values.secrets.postgresPassword }}@postgres:5432/{{ .Values.secrets.postgresDb }}"
+  REDIS_URL: "redis://redis:6379/0"

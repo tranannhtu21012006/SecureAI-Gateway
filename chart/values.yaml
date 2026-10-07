@@ -1,0 +1,44 @@
+# Default values for secureai-gateway.
+# Bạn có thể thay đổi các thông số ở đây, chúng sẽ tự động update vào các file yaml.
+
+global:
+  environment: "production"
+
+backend:
+  image:
+    repository: secureai-gateway-backend
+    tag: latest
+    pullPolicy: Never # Dùng Never cho local K3d image
+  replicas: 1
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
+frontend:
+  image:
+    repository: secureai-gateway-frontend
+    tag: latest
+    pullPolicy: Never
+  replicas: 1
+
+postgres:
+  image: postgres:15-alpine
+  storage: 1Gi
+
+redis:
+  image: redis:7-alpine
+
+ingress:
+  enabled: true
+
+secrets:
+  # Helm sẽ tự động mã hóa base64 các giá trị này khi generate Secret!
+  # Bạn KHÔNG CẦN tự encode base64 như trước nữa.
+  secretKey: "supersecretkey-change-in-prod"
+  openaiApiKey: "your_openai_key"
+  geminiApiKey: "your_gemini_key"
+  postgresUser: "postgres"
+  postgresPassword: "postgres"
+  postgresDb: "secureai"
