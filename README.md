@@ -6,6 +6,9 @@ Instead of handing out real OpenAI or Gemini keys, you issue gateway-owned API k
 > **Status:** 🚧 In active development. Core gateway features are working; see the [Roadmap](#roadmap) for what is next.
 
 ![SecureAI Gateway demo](docs/images/gif1.gif)
+![SecureAI Gateway demo](docs/images/gif2.gif)
+![SecureAI Gateway demo](docs/images/gif3.gif)
+![SecureAI Gateway demo](docs/images/gif4.gif)
 
 ---
 
