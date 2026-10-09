@@ -5,8 +5,7 @@ Instead of handing out real OpenAI or Gemini keys, you issue gateway-owned API k
 
 > **Status:** 🚧 In active development. Core gateway features are working; see the [Roadmap](#roadmap) for what is next.
 
-<!-- Add a screenshot or GIF of the dashboard / Model Arena here:
-![Dashboard](docs/images/dashboard.png) -->
+![SecureAI Gateway demo](docs/images/gif1.gif)
 
 ---
 
