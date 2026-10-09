@@ -22,7 +22,7 @@ export default function Login() {
       });
       
       login(data.access_token, { id: 'dummy', email, role: 'user' }); // In a real app, you'd decode the JWT or fetch user details
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Login failed');
     }

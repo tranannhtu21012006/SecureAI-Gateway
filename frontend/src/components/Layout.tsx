@@ -1,11 +1,22 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../services/auth';
-import { LayoutDashboard, Key, MessageSquare, Settings, LogOut, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Key, MessageSquare, Settings, LogOut, Sun, Moon, Swords, ScrollText } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const NAV_ITEMS = [
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/dashboard/playground', label: 'Playground', icon: MessageSquare },
+  { path: '/dashboard/arena', label: 'Model Arena', icon: Swords },
+  { path: '/dashboard/api-keys', label: 'API Keys', icon: Key },
+  { path: '/dashboard/logs', label: 'Request Logs', icon: ScrollText },
+  { path: '/dashboard/settings', label: 'Settings', icon: Settings },
+];
 
 export default function Layout() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
@@ -24,25 +35,36 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <h1 className="text-xl font-bold text-indigo-600 dark:text-indigo-400">SecureAI</h1>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <Link to="/" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <LayoutDashboard className="w-5 h-5 mr-3" /> Dashboard
-          </Link>
-          <Link to="/playground" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <MessageSquare className="w-5 h-5 mr-3" /> Playground
-          </Link>
-          <Link to="/api-keys" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <Key className="w-5 h-5 mr-3" /> API Keys
-          </Link>
-          <Link to="/settings" className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <Settings className="w-5 h-5 mr-3" /> Settings
-          </Link>
+        <nav className="flex-1 p-4 flex flex-col gap-1">
+          {NAV_ITEMS.map((item) => {
+            const isActive = location.pathname === item.path;
+            const Icon = item.icon;
+            
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`relative flex items-center p-2 rounded-lg transition-colors z-10 ${
+                  isActive ? "text-indigo-700 dark:text-indigo-300" : "hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active-tab"
+                    className="absolute inset-0 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg -z-10"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <Icon className="w-5 h-5 mr-3" /> {item.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">{user?.email}</div>
@@ -60,7 +82,18 @@ export default function Layout() {
           </button>
         </header>
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="h-full"
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>
