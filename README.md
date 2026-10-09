@@ -191,7 +191,6 @@ Full interactive documentation is served at `/docs` when the backend is running.
 
 - [ ] **Budget limits**: automatically block a key when its monthly spend cap is reached
 - [ ] **Provider health monitor** and **circuit breaker** with automatic fallback to another provider
-- [✅] CI/CD pipeline for build, test, and deploy
 - [ ] Interactive API docs with the user's key pre-filled in code samples
 - [ ] Prompt library with `{{variable}}` templates
 - [ ] Webhook alerts (Slack / Discord) for errors and budget thresholds
