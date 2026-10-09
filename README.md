@@ -1,5 +1,5 @@
 # SecureAI Gateway
-
+[![Frontend CI](https://github.com/tranannhtu21012006/SecureAI-Gateway/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/tranannhtu21012006/SecureAI-Gateway/actions/workflows/frontend-ci.yml)
 **A self-hosted API gateway that sits between your users/apps and LLM providers.**
 Instead of handing out real OpenAI or Gemini keys, you issue gateway-owned API keys. The gateway authenticates every request, enforces rate limits, scans prompts, caches responses, tracks usage and cost, and only then calls the provider with your real key.
 
