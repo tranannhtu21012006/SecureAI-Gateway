@@ -40,4 +40,5 @@ jobs:
       run: npm run build
 
     - name: Test Docker Build
-      run: docker build -t secureai-frontend-test -f Dockerfile --target production .
+      working-directory: .
+      run: docker build -t secureai-frontend-test -f frontend/Dockerfile --target production .
