@@ -30,6 +30,17 @@ postgres:
 redis:
   image: redis:7-alpine
 
+prometheus:
+  enabled: true
+  image: prom/prometheus:v2.48.0
+  scrapeInterval: 15s
+
+grafana:
+  enabled: true
+  image: grafana/grafana:10.2.0
+  adminUser: admin
+  adminPassword: admin
+
 ingress:
   enabled: true
 

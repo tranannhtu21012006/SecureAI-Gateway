@@ -1,0 +1,92 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-config
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+        editable: true
+        uid: prometheus
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider-config
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        allowUiUpdates: true
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: {{ .Values.grafana.image }}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: {{ .Values.grafana.adminUser | quote }}
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: {{ .Values.grafana.adminPassword | quote }}
+        - name: GF_SERVER_ROOT_URL
+          value: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+        - name: GF_SERVER_SERVE_FROM_SUB_PATH
+          value: "true"
+        volumeMounts:
+        - name: grafana-datasource-volume
+          mountPath: /etc/grafana/provisioning/datasources
+        - name: grafana-dashboard-provider-volume
+          mountPath: /etc/grafana/provisioning/dashboards
+        - name: grafana-dashboards-volume
+          mountPath: /var/lib/grafana/dashboards
+      volumes:
+      - name: grafana-datasource-volume
+        configMap:
+          name: grafana-datasource-config
+      - name: grafana-dashboard-provider-volume
+        configMap:
+          name: grafana-dashboard-provider-config
+      - name: grafana-dashboards-volume
+        configMap:
+          name: grafana-dashboards
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: grafana
+{{- end }}

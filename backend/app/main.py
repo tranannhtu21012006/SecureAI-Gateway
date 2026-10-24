@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
 from app.routers import auth, analytics, admin
 from app.routers.chat import router as chat_router
 from app.middleware.logging_middleware import LoggingMiddleware
@@ -22,6 +24,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Prometheus metrics instrumentation & /metrics endpoint
+Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 # CORS - allow frontend dev server
 app.add_middleware(

@@ -1,0 +1,57 @@
+{{- if .Values.prometheus.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: {{ .Values.prometheus.scrapeInterval }}
+      evaluation_interval: {{ .Values.prometheus.scrapeInterval }}
+    scrape_configs:
+      - job_name: 'secureai-backend'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['backend:8000']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: {{ .Values.prometheus.image }}
+        args:
+          - "--config.file=/etc/prometheus/prometheus.yml"
+          - "--storage.tsdb.path=/prometheus"
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+          name: prometheus-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  ports:
+  - port: 9090
+    targetPort: 9090
+  selector:
+    app: prometheus
+{{- end }}

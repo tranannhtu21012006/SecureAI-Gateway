@@ -9,6 +9,15 @@ spec:
   rules:
   - http:
       paths:
+      {{- if .Values.grafana.enabled }}
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+      {{- end }}
       - path: /api
         pathType: Prefix
         backend:
